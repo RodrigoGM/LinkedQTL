@@ -1,0 +1,27 @@
+#!/bin/bash
+# -----------------------[SLURM : START]---------------------------
+# -- run name --
+#SBATCH --job-name=LinkedQTL
+
+#  -- email preferences --
+##SBATCH --mail-user=rodrigo.gularte@ulg.ac.be
+#SBATCH --mail-type=FAIL     # (ALL = BEGIN, END, FAIL, REQUEUE)
+
+# -- output prefex
+#SBATCH --output="LQ-%j.out"
+#     %j     Job allocation number.
+#     %N     Main node name.  
+
+# -- time requierements --
+## SBATCH --time=36:00:00
+
+# ---- Resources ----
+#SBATCH --ntasks-per-node=16 --mem-per-cpu=4000
+
+# ---- Array Control ----  
+# -- format: 0-7:1 0 through 7 by one
+##SBATCH --array=0-19   ## add at comand line
+
+# -----------------------[SLURM : END]---------------------------
+
+R --vanilla < src/cf2_submit.slq

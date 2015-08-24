@@ -66,7 +66,7 @@ system.time({
     n.crosses = reps
     ##nMar <-as.numeric(nmar(map))
     maps = list(map, map1152, map384, map96)
-    cl <- makeCluster(2, type = "SOCK") # , type = "MPI")
+    cl <- makeCluster(16, type = "SOCK")  # type = "MPI")  # 
     clusterSetupRNG(cl, seed = c(20100905, 19450728, 19750903, 20090830, 19811130, 19811122))
     clusterExport(cl, list = ls())
     clusterEvalQ(cl, {
