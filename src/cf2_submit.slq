@@ -25,12 +25,13 @@
 # -----------------------[SLURM : END]---------------------------
 
 echo "# === Starting data creation === #"
+date
 $HOME/src/R-3.2.2/bin/R --vanilla < src/cf2_make_q1_world.R 
-
+date
 echo "# === Finished data creation === #"
 
 echo "# === Started data analysis === #"
-
+date
 $HOME/src/R-3.2.2/bin/R --vanilla < src/cf2_analyze_q1_world.R 
-
+date
 echo "# === Finished data analysis === #"
