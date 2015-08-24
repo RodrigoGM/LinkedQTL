@@ -6,9 +6,11 @@ setwd("./cf2_o")
 ## error options
 options(error = quote(dump.frames("q1_A3", to.file = TRUE)))
 
-library(qtl)
-library(RColorBrewer)
-library(snow)
+.libPaths="~/lib64/R/library/"
+library(qtl, lib.loc = "~/lib64/R/library/")
+library(RColorBrewer, lib.loc = "~/lib64/R/library/")
+library(snow, lib.loc = "~/lib64/R/library/")
+library(rlecuyer, lib.loc = "~/lib64/R/library/")
 
 sapply(file.path("../src/", c("FileCheck.R", "mcim.R", "SelectMarkers.R",
                  "sim.cross.f2.npheno.R", "sim.cross.npheno.R", "plotmedians.R",
