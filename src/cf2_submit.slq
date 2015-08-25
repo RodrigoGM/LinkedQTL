@@ -16,22 +16,26 @@
 ## SBATCH --time=36:00:00
 
 # ---- Resources ----
-#SBATCH --ntasks-per-node=16 --mem-per-cpu=4000
+#SBATCH --ntasks-per-node=48 --mem-per-cpu=2660
 
 # ---- Array Control ----  
 # -- format: 0-7:1 0 through 7 by one
 ##SBATCH --array=0-19   ## add at comand line
 
 # -----------------------[SLURM : END]---------------------------
+module load openmpi/1.5.3/gcc-4.4.4
+export R_LIBS=$HOME/lib64/R/library/
+R_BIN=$HOME/src/R-3.2.2/bin/R
+RMPISNOW=$HOME/lib64/R/library/snow/RMPISNOW
 
 echo "# === Starting data creation === #"
 date
-$HOME/src/R-3.2.2/bin/R --vanilla < src/cf2_make_q1_world.R 
+mpirun -n $SLURM_JOB_CPUS_PER_NODE $RMPISNOW < src/cf2_make_q1_world.R 
 date
 echo "# === Finished data creation === #"
 
 echo "# === Started data analysis === #"
 date
-$HOME/src/R-3.2.2/bin/R --vanilla < src/cf2_analyze_q1_world.R 
+mpirun -n $SLURM_JOB_CPUS_PER_NODE $RMPISNOW < src/cf2_analyze_q1_world.R 
 date
 echo "# === Finished data analysis === #"

@@ -6,11 +6,11 @@ setwd("./cf2_o")
 ## error options
 options(error = quote(dump.frames("q1_A3", to.file = TRUE)))
 
-.libPaths="~/lib64/R/library/"
-library(qtl, lib.loc = "~/lib64/R/library/")
-library(RColorBrewer, lib.loc = "~/lib64/R/library/")
-library(snow, lib.loc = "~/lib64/R/library/")
-library(rlecuyer, lib.loc = "~/lib64/R/library/")
+.libPaths="/home/ulg/genan/rgularte/lib64/R/library/"
+library(qtl, lib.loc = "/home/ulg/genan/rgularte/lib64/R/library/")
+library(RColorBrewer, lib.loc = "/home/ulg/genan/rgularte/lib64/R/library/")
+library(snow, lib.loc = "/home/ulg/genan/rgularte/lib64/R/library/")
+library(rlecuyer, lib.loc = "/home/ulg/genan/rgularte/lib64/R/library/")
 
 sapply(file.path("../src/", c("FileCheck.R", "mcim.R", "SelectMarkers.R",
                  "sim.cross.f2.npheno.R", "sim.cross.npheno.R", "plotmedians.R",
@@ -23,7 +23,9 @@ sapply(file.path("../src/", c("FileCheck.R", "mcim.R", "SelectMarkers.R",
 ls()
 
 system.time({
-    cl <- makeCluster(16, type = "SOCK") ## "MPI")
+
+    np <- 48 ## mpi.universe.size() ##
+    cl <- makeCluster(np, type = "SOCK")  ##  type = "MPI")  ##  
     clusterSetupRNG(cl, seed = c(20100905, 19450728, 19750903, 20090830, 19811130, 19811122))
     clusterExport(cl, list = ls())
     clusterEvalQ(cl, {
