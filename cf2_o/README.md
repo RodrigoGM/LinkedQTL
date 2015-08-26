@@ -1,4 +1,6 @@
-cf2_o : Output directory.
+###cf2_o 
 
-RandomSample.txt
-	random sample of crosses to keep
+Outputs directory
+
+*RandomSample.txt* : 
+	List of a random sample of crosses to keep *.rda files.  Files are stored in ../cf2_e/
