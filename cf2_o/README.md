@@ -1,4 +1,4 @@
-###cf2_o 
+###cf2_o/ 
 
 Outputs directory
 
