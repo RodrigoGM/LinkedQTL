@@ -24,8 +24,9 @@
 
 # -----------------------[SLURM : END]---------------------------
 
-#export R_LIBS=$HOME/lib64/R/library/
-#R_BIN=$HOME/src/R-3.2.2/bin/R
+# server dependent settings
+export R_LIBS=$HOME/lib64/R/library/
+R_BIN=$HOME/src/R-3.2.2/bin/R
 
 PATTERN=$1
 CROSS=( $(find cf2_d/ -name $PATTERN | sed -e 's:cf2_d//::') )
@@ -34,6 +35,6 @@ SLURM_ARRAY_TASK_ID=${SLURM_ARRAY_TASK_ID:-2}
 
 echo "# === Started data analysis === #"
 date
-R --vanilla --args ${CROSS[$SLURM_ARRAY_TASK_ID]} < src/cf2_analyze_cross.i.R
+$R_BIN --vanilla --args ${CROSS[$SLURM_ARRAY_TASK_ID]} < src/cf2_analyze_cross.i.R
 date
 echo "# === Finished data analysis === #"
