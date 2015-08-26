@@ -69,20 +69,20 @@
 
 	Script to quickly check if what files are processed and which are remaining to be analyzed.
 	
-* *SelectMarkers_V2_3.R*
+* *SelectMarkers.R*
 
 	Function for downsampling a set of markes from a cross.
 
-* *Make5pheno_V2_3.R*
+* *Make5pheno.R*
 
 	Functions to create a cross 5 five correlated phenotypes
 	
-* *sim.cross.f2.npheno_V2_3.R*
+* *sim.cross.f2.npheno.R*
 
 	Function to simulate `n` number of phenotypes.  At the moment the n is set to 5, as this function uses 
-	Make5pheno_V2_3.R.
+	Make5pheno.R.
 	
-* *sim.cross.npheno_V2_3.R*
+* *sim.cross.npheno.R*
  
 	Function to simulate crosses with five phenotypes.
 	
@@ -90,16 +90,16 @@
 
 	Functions to plot meadians similar to plotmeans from package `gplots`
 
-* *LinkageAnalysis_V2_3.R*
+* *LinkageAnalysis.R*
 
 	Functions to implement a linkage analysis with IM and CIM.  Script performs the peak detection and other summary
 	functions.
 
-* *StepwiseAnalysis_V2_3.R*
+* *StepwiseAnalysis.R*
 
 	Functions to implement a linkage analysis using the function stepwiseqtl.  Script performs the peak detection and
 	other summary functions
 	
-* *mcim_V2_3.R*
+* *mcim.R*
 
-	Function for replicated composite interval mapping. A copy of this function was moved to LinkageAnalysis_V2_3.R
+	Function for replicated composite interval mapping. A copy of this function was moved to LinkageAnalysis.R
