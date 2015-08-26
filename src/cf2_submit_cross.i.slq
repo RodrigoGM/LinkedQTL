@@ -16,26 +16,24 @@
 ## SBATCH --time=36:00:00
 
 # ---- Resources ----
-#SBATCH --ntasks-per-node=48 --mem-per-cpu=2660
+#SBATCH --ntasks-per-node=1 --mem-per-cpu=4000
 
 # ---- Array Control ----  
 # -- format: 0-7:1 0 through 7 by one
 ##SBATCH --array=0-19   ## add at comand line
 
 # -----------------------[SLURM : END]---------------------------
-module load openmpi/1.5.3/gcc-4.4.4
-export R_LIBS=$HOME/lib64/R/library/
-R_BIN=$HOME/src/R-3.2.2/bin/R
-RMPISNOW=$HOME/lib64/R/library/snow/RMPISNOW
 
-echo "# === Starting data creation === #"
-date
-mpirun -n $SLURM_JOB_CPUS_PER_NODE $RMPISNOW < src/cf2_make_q1_world.R 
-date
-echo "# === Finished data creation === #"
+#export R_LIBS=$HOME/lib64/R/library/
+#R_BIN=$HOME/src/R-3.2.2/bin/R
+
+PATTERN=$1
+CROSS=( $(find cf2_d/ -name $PATTERN | sed -e 's:cf2_d//::') )
+SLURM_ARRAY_TASK_ID=${SLURM_ARRAY_TASK_ID:-2}
+
 
 echo "# === Started data analysis === #"
 date
-mpirun -n $SLURM_JOB_CPUS_PER_NODE $RMPISNOW < src/cf2_analyze_q1_world.R 
+R --vanilla --args ${CROSS[$SLURM_ARRAY_TASK_ID]} < src/cf2_analyze_cross.i.R
 date
 echo "# === Finished data analysis === #"
