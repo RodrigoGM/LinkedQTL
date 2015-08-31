@@ -70,7 +70,7 @@ system.time({
   ##nMar <-as.numeric(nmar(map))
   maps = list(map, map1152, map384, map96)
   cl <- makeCluster(np, type = "SOCK")  ##  type = "MPI")  ##  
-  clusterSetupRNG(cl, seed = c(20100905, 19450728, 19750927, 20090830, 19811130, 19811122))
+  clusterSetupRNG(cl, seed = c(20100905, 19450728, 19850327, 20090830, 19811130, 19811122))
   clusterExport(cl, list = ls())
   clusterEvalQ(cl, {
       require(qtl)
