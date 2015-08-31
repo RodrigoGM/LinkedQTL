@@ -26,7 +26,7 @@ system.time({
 
     np <- 48 ## mpi.universe.size() ##
     cl <- makeCluster(np, type = "SOCK")  ##  type = "MPI")  ##  
-    clusterSetupRNG(cl, seed = c(20100905, 19450728, 19750903, 20090830, 19811130, 19811122))
+    clusterSetupRNG(cl, seed = c(20100905, 19450728, 19850927, 20090830, 19811130, 19811122))
     clusterExport(cl, list = ls())
     clusterEvalQ(cl, {
         require(qtl)
