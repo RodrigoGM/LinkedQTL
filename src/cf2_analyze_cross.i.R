@@ -47,10 +47,10 @@ smry.stq.hk.a <- summary.mtqtl(stq.hk.a, cross.no = cross.no, cross = cross.a, p
                                k.dist = 15, mapped.with = "stq")
 
 write.csv(rbind(smry.im.hk.a, smry.cim.hk.a),
-          file = paste(gsub("\\.csv", "", cross.i), "_S1smry.csv", sep = ""),
+          file = paste(gsub("\\.csv", "", cross.i), "_S1.csv", sep = ""),
           row.names = FALSE, append = TRUE)
 
-write.csv(smry.stq.hk.a, file = paste(gsub("\\.csv", "", cross.i), "_MQMsmry.csv", sep = ""),
+write.csv(smry.stq.hk.a, file = paste(gsub("\\.csv", "", cross.i), "_MQM.csv", sep = ""),
           row.names = FALSE, append = TRUE)
 
 save.image(gsub("csv", "rda", cross.i))

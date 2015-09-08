@@ -21,5 +21,4 @@ Simulation of two linked QTL in a single chromosome with varying number of marke
 
 *LICENSE* : Essentially BSD-3
 	
-	
 *README.md* : this file

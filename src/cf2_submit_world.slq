@@ -28,11 +28,11 @@ export R_LIBS=$HOME/lib64/R/library/
 R_BIN=$HOME/src/R-3.2.2/bin/R
 RMPISNOW=$HOME/lib64/R/library/snow/RMPISNOW
 
-echo "# === Starting data creation === #"
-date
-mpirun -n $SLURM_JOB_CPUS_PER_NODE $RMPISNOW < src/cf2_make_world.R 
-date
-echo "# === Finished data creation === #"
+#echo "# === Starting data creation === #"
+#date
+#mpirun -n $SLURM_JOB_CPUS_PER_NODE $RMPISNOW < src/cf2_make_world.R 
+#date
+#echo "# === Finished data creation === #"
 
 echo "# === Started data analysis === #"
 date

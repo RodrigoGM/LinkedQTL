@@ -1,100 +1,13 @@
 ## Analysis of cf2_o
-
 ## Working directories
-setwd("L:/CF2")
-setwd("analysis")
+setwd("./analysis/")
 
-## libraries
-library(RColorBrewer)
-library(gplots)
-library(lattice)
-## setwd("L:/CF2/cf2_o")  ##Temporarily
-mqm.q1 = do.call("rbind", lapply(list.files("../cf2_o", pattern = "C-F2_q1.*MQMsmry"), read.csv))
-mqm.q2 = do.call("rbind", lapply(list.files("../cf2_o", pattern = "C-F2_q2.*MQMsmry"), read.csv))
+source("../src/PA_merge.R")
 
-im.q1 = do.call("rbind", lapply(list.files("../cf2_o", pattern = "C-F2_q1.*S1smry"), read.csv))
-im.q2 = do.call("rbind", lapply(list.files("../cf2_o", pattern = "C-F2_q2.*S1smry"), read.csv))
+cols <- brewer.pal(9, "Set1")
+colb <- brewer.pal(3, "Dark2")
 
-modelq1 = read.csv("../cf2_d/CF2-Q1_Model.csv")
-modelq2 = read.csv("../cf2_d/CF2-Q2_Model.csv")
-
-colnames(modelq1)[1] <- "cross.no"
-colnames(modelq2)[1] <- "cross.no"
-modelq1$model = 1
-modelq2$model = 2
-
-mqm.q1 = merge(mqm.q1, modelq1, by = "cross.no", all.x = TRUE)
-mqm.q2 = merge(mqm.q2, modelq2, by = "cross.no", all.x = TRUE)
-
-im.q1 = merge(im.q1, modelq1, by = "cross.no", all.x = TRUE)
-im.q2 = merge(im.q2, modelq2, by = "cross.no", all.x = TRUE)
-
-mqm = rbind(mqm.q1, mqm.q2)
-im = rbind(im.q1, im.q2)
-
-mqm$corr[mqm$phenotype == "phenotype.1"] = 1
-mqm$corr[mqm$phenotype == "phenotype.2"] = .90
-mqm$corr[mqm$phenotype == "phenotype.3"] = .60
-mqm$corr[mqm$phenotype == "phenotype.4"] = .30
-mqm$corr[mqm$phenotype == "phenotype.5"] = 0
-
-im$corr[im$phenotype == "phenotype.1"] = 1
-im$corr[im$phenotype == "phenotype.2"] = .90
-im$corr[im$phenotype == "phenotype.3"] = .60
-im$corr[im$phenotype == "phenotype.4"] = .30
-im$corr[im$phenotype == "phenotype.5"] = 0
-
-mqm$dist = sapply(1:length(mqm[,1]), function(i) min(abs(mqm$peak[i] - mqm$loc1[i]), abs(mqm$peak[i] - mqm$loc2[i])))
-im$dist = sapply(1:length(im[,1]), function(i) min(abs(im$peak[i] - im$loc1[i]), abs(im$peak[i] - im$loc2[i])))
-
-mqm$loc = sapply(1:length(mqm[,1]), function(i) mean(c(mqm$loc1[i], mqm$loc2[i])))
-im$loc =  sapply(1:length(im[,1]), function(i) mean(c(im$loc1[i], im$loc2[i])))
-
-mqm$ci.length = mqm$uci - mqm$lci
-im$ci.length = im$uci - im$lci
-
-mqm$model.t = ifelse(mqm$model == 1, "a1 = 5 | a2 = 5", "a1 = 5 | a2 = 10")
-mqm$corr.t = paste("r =", mqm$corr)
-
-im$model.t = ifelse(im$model == 1, "a1 = 5 | a2 = 5", "a1 = 5 | a2 = 10")
-im$corr.t = paste("r =", im$corr)
-
-mqm$nind.t = paste("N =", mqm$nind)
-im$nind.t = paste("N =", im$nind)
-
-plotmeans(dist ~ phenotype, data = mqm)
-plotmeans(ci.length ~ phenotype, data = mqm)
-
-write.table(mqm, file = "MQM summary.tab", sep = "\t", quote = FALSE, row.names = FALSE)
-write.table(im, file = "IM summary.tab", sep = "\t", quote = FALSE, row.names = FALSE)
-## Merge in Excel for the analysis
-## THEN READ in new joint data set.  Make sure to delete additional fields to avoid the
-## extra blank fields excel tends to save.
-qtls = read.delim("QTLsummaries.txt")
-qtls$method = as.character(qtls$method)
-qtls$method<- gsub("stq", "QMS", qtls$method)
-qtls$detected = sapply(1:length(qtls[,1]), function(i) ifelse(abs(qtls$peak[i] - qtls$loc1[i]) < abs(qtls$peak[i] - qtls$loc2[i]), "a1", "a2"))
-## Reordering...
-qtls$nind.t = factor(qtls$nind.t, levels = c("N = 1500", "N = 1000", "N = 500", "N = 250"))
-qtls$model.t = factor(qtls$model.t, levels = c("a1 = 5 | a2 = 5", "a1 = 5 | a2 = 10"))
-qtls$method = factor(qtls$method, levels = c("IM", "CIM", "QMS"))
-qtls$model.ta = factor(qtls$model.t, levels = c("a1 = 5 | a2 = 10", "a1 = 5 | a2 = 5"))
-
-qtls$cd = NA
-###qtls$cd[qtls$detected == "a1" & qtls$lci <= qtls$loc1 & qtls$loc1 <= qtls$uci] =  1
-###qtls$cd[qtls$detected == "a2" & qtls$lci <= qtls$loc2 & qtls$loc2 <= qtls$uci] = 1
-qtls$fd = NA
-###qtls$fd[qtls$cd == 1] = 0
-###qtls$fd[qtls$cd == 0] = 1
-## check for cd and fd in excel nd re read file.
-#write.table(qtls, file = "QTLsummaries.txt", sep = "\t", quote = FALSE, row.names = FALSE)
-
-
-
-cols = brewer.pal(9, "Set1")
-colb = brewer.pal(3, "Dark2")
-
-out.d = glm(dist ~ corr + model + nind + nind:model + method + method:model +
+out.d <- glm(dist ~ corr + model + nind + nind:model + method + method:model +
   method:nind + method:nind:model + loc + loc:model + loc:nind:model +
   loc:method:model, data = qtls)
 
@@ -103,7 +16,7 @@ plot(out.d, pch = 19, cex = .5)
 dev.off()
 
 
-out.l = glm(ci.length ~ model + nind + nind:model + nmar + nind:nmar +
+out.l <- glm(ci.length ~ model + nind + nind:model + nmar + nind:nmar +
   nind:nmar:model + method + corr:method + method:model + method:nind +
   method:nind:model + method:nind:nmar + loc + loc:model + loc:nind +
   loc:nind:model + loc:nind:nmar + loc:method + corr:loc:method +
@@ -149,7 +62,7 @@ dev.off()
 tiff("Dist vs nind or nmar by method.tiff", width = 1600, height = 1000, units = "px",
   pointsize = 15)
   
-nf = layout(mat = matrix(c(4, 3, 1, 2), nrow = 2, ncol = 2), widths = 1, heights = 1)
+nf <- layout(mat = matrix(c(4, 3, 1, 2), nrow = 2, ncol = 2), widths = 1, heights = 1)
 layout.show(nf)
 par(mar = c(4.4, 5, 2, 1.3)+.1, lwd = 3, cex.axis = 2, cex.lab = 2.1, bty = "l")
 ylimd = c(0, 5)

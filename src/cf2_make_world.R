@@ -36,7 +36,7 @@ reps <- 1800
 Q1 <- data.frame(loc1 = runif(reps, 5, 95-15))
 Q1$loc2 <- Q1$loc1 + 15
 Q1 <- cbind(Q1, qtl[1,])
-write.csv(Q1, file = "CF2-Q1_Model.csv")
+write.csv(Q1, file = "CF2-q1_Model.csv", quote = FALSE)
 
 q1 <- lapply(1:reps, function(i) rbind(c(Q1[i,"chr"], Q1[i,"loc1"], Q1[i,"a1"], Q1[i,"d1"]),
                                        c(Q1[i,"chr"], Q1[i,"loc2"], Q1[i,"a2"], Q1[i,"d2"])
@@ -45,7 +45,7 @@ q1 <- lapply(1:reps, function(i) rbind(c(Q1[i,"chr"], Q1[i,"loc1"], Q1[i,"a1"], 
 Q2 <- data.frame(loc1 = runif(reps, 5, 95-15))
 Q2$loc2 <- Q2$loc1 + 15
 Q2 <- cbind(Q2, qtl[2,])
-write.csv(Q2, file = "CF2-Q2_Model.csv")
+write.csv(Q2, file = "CF2-q2_Model.csv", quote = FALSE)
 
 q2 <- lapply(1:reps, function(i) rbind(c(Q2[i,"chr"], Q2[i,"loc1"], Q2[i,"a1"], Q2[i,"d1"]),
                                        c(Q1[i,"chr"], Q1[i,"loc2"], Q1[i,"a2"], Q1[i,"d2"])
