@@ -2,7 +2,14 @@
 ## Working directories
 setwd("./analysis/")
 
-source("../src/PA_merge.R")
+## librarires
+library(gplots)
+library(lattice)
+library(RColorBrewer)
+source("../src/plotmedians2.R")
+
+## data
+load("LinkedQTL.rda")
 
 cols <- brewer.pal(9, "Set1")
 colb <- brewer.pal(3, "Dark2")
@@ -11,10 +18,9 @@ out.d <- glm(dist ~ corr + model + nind + nind:model + method + method:model +
   method:nind + method:nind:model + loc + loc:model + loc:nind:model +
   loc:method:model, data = qtls)
 
-pdf("glm diagnostics dist.pdf", width = 11, height = 7)
+pdf("../figures/glm diagnostics dist.pdf", width = 11, height = 7)
 plot(out.d, pch = 19, cex = .5)
 dev.off()
-
 
 out.l <- glm(ci.length ~ model + nind + nind:model + nmar + nind:nmar +
   nind:nmar:model + method + corr:method + method:model + method:nind +
@@ -22,12 +28,12 @@ out.l <- glm(ci.length ~ model + nind + nind:model + nmar + nind:nmar +
   loc:nind:model + loc:nind:nmar + loc:method + corr:loc:method +
   loc:method:model + loc:method:nind, data = qtls)
 
-pdf("glm diagnostics ci_length.pdf", width = 11, height = 7)
+pdf("../figures/glm diagnostics ci_length.pdf", width = 11, height = 7)
 plot(out.l, pch = 19, cex = .5)
 dev.off()
 
 
-pdf("dist and ci length, Bopxplots.pdf", width = 8, height = 12)
+pdf("../figures/dist and ci length, Bopxplots.pdf", width = 8, height = 12)
 par(mfrow = c(3, 1), bty = "l")
 boxplot(dist ~ model.t*nind.t, data = qtls[qtls$method == "QMS",], col = cols[2],
   main = "Distance with MQM", cex = 2, pch = ".")
@@ -46,7 +52,7 @@ boxplot(ci.length ~ model.t*nind.t, data = qtls[qtls$method == "QMS",],
 dev.off()
 
 ##Histogram of QTL locations
-tiff("Histogram of QTL Locations.tiff", width = 1200, height = 500, units = "px",
+png("../figures/Histogram of QTL Locations.png", width = 1200, height = 500, units = "px",
   pointsize = 14)
 par(mar = c(4.2, 4, 2, 1)+.1, mfrow = c(2, 2), cex.lab = 1.3, cex.axis = 1.2)
 hist(modelq1$loc1, breaks = 500, xlim = c(0,100), main = "", xlab = "")
@@ -55,12 +61,11 @@ hist(modelq1$loc2, breaks = 500, xlim = c(0,100), main = "", xlab = "QTL Locatio
 hist(modelq2$loc2, breaks = 500, xlim = c(0,100), main = "", xlab = "QTL Location (cM)", ylab = "")
 dev.off()
 
-
              
-#pdf("Dist and CI length PlotMeans.pdf", width = 10, height =10)
+pdf("../figures/Dist and CI length PlotMeans.pdf", width = 10, height =10)
 
-tiff("Dist vs nind or nmar by method.tiff", width = 1600, height = 1000, units = "px",
-  pointsize = 15)
+##png("../figures/Dist vs nind or nmar by method.png", width = 1600, height = 1000, units = "px",
+##  pointsize = 15)
   
 nf <- layout(mat = matrix(c(4, 3, 1, 2), nrow = 2, ncol = 2), widths = 1, heights = 1)
 layout.show(nf)
@@ -123,7 +128,7 @@ legend("topright", legend = c("a1 = 5 | a2 = 5 | IM", "a1 = 5 | a2 = 5 | CIM", "
 #dev.off()
 
 # 3 #
-#pdf("CI Length vs Markers plotmedians.pdf", width = 8, height = 8)
+#pdf("../figures/CI Length vs Markers plotmedians.pdf", width = 8, height = 8)
 #par(lwd = 2, cex.axis = 1.3, cex.lab = 1.3, bty = "l")
 plotmedians(ci.length ~ nmar, data = qtls[qtls$method == "QMS" & qtls$model == 1,], 
   col = cols[3], ylim = ylimci, #main = "CI Length vs Marker Density",
@@ -186,21 +191,21 @@ dev.off()
 
 ### LATICE PLOTS TO UNDERSTAND LOCATION EFFECTS
 
-nind.key = list(text = list(c("N = 250", "N = 500", "N = 1000", "N = 1500"), font = 2, cex = 1.3),
+nind.key <- list(text = list(c("N = 250", "N = 500", "N = 1000", "N = 1500"), font = 2, cex = 1.3),
             points = list(col = cols[1:4],pch = 19, cex = 1.5), space = "right"
           )
 
-mar.key = list(text = list(c("Md = 96", "Md = 384", "Md = 1152", "Md = 1536"), font = 2, cex = 1.3),
+mar.key <- list(text = list(c("Md = 96", "Md = 384", "Md = 1152", "Md = 1536"), font = 2, cex = 1.3),
             points = list(col = cols[1:4], pch = 19, cex = 1.5), space = "right"
           )
 
-wi = 860
-he = 500
-xlim1 = c(5, 95)
-ylim1 = c(0, 100)
-##pdf("Peak, dist, ci length vs loc.pdf", width = 11, height = 8)
+wi <- 860
+he <- 500
+xlim1 <- c(5, 95)
+ylim1 <- c(0, 100)
+##pdf("../figures/Peak, dist, ci length vs loc.pdf", width = 11, height = 8)
 # Peak
-tiff("Peak vs loc All.tiff", width = wi, height = he, units = "px", 
+png("../figures/Peak vs loc All.png", width = wi, height = he, units = "px", 
     pointsize = 20)
 
 xyplot(peak ~ loc|method*model.ta, data = qtls,
@@ -214,7 +219,7 @@ xyplot(peak ~ loc|method*model.ta, data = qtls,
   key = nind.key)
 dev.off()
 
-tiff("Peak vs loc by nind QMS.tiff", width = wi, height = he, units = "px", 
+png("../figures/Peak vs loc by nind QMS.png", width = wi, height = he, units = "px", 
     pointsize = 20)
 
 xyplot(peak ~ loc|model.t*nind.t, data = qtls[qtls$method == "QMS",],
@@ -228,7 +233,7 @@ xyplot(peak ~ loc|model.t*nind.t, data = qtls[qtls$method == "QMS",],
   key = mar.key)
 dev.off()
 
-tiff("Peak vs loc by nind IM.tiff", width = wi, height = he, units = "px", 
+png("../figures/Peak vs loc by nind IM.png", width = wi, height = he, units = "px", 
     pointsize = 20)
 xyplot(peak ~ loc|model.t*nind.t, data = qtls[qtls$method == "IM",],
   strip = strip.custom(par.strip.text = list(cex = 1.0, font = 2, col = "black"),
@@ -241,7 +246,7 @@ xyplot(peak ~ loc|model.t*nind.t, data = qtls[qtls$method == "IM",],
   key = mar.key)
 dev.off()
 
-tiff("Peak vs loc by nind CIM.tiff", width = wi, height = he, units = "px", 
+png("../figures/Peak vs loc by nind CIM.png", width = wi, height = he, units = "px", 
     pointsize = 20)
 xyplot(peak ~ loc|model.t*nind.t, data = qtls[qtls$method == "CIM",],
   strip = strip.custom(par.strip.text = list(cex = 1.0, font = 2, col = "black"),
@@ -258,7 +263,7 @@ dev.off()
 
 # Confidence Interval Length
 
-tiff("CI Length vs loc All.tiffa", width = wi, height = he, units = "px", 
+png("../figures/CI Length vs loc All.png", width = wi, height = he, units = "px", 
     pointsize = 20)
 xyplot(ci.length ~ loc|method*model.ta, data = qtls,
   strip = strip.custom(par.strip.text = list(cex = 1.0, font = 2, col = "black"),
@@ -271,7 +276,7 @@ xyplot(ci.length ~ loc|method*model.ta, data = qtls,
   key = nind.key)
 dev.off()
 
-tiff("CI Length vs loc by nind QMS.tiff", width = wi, height = he, units = "px", 
+png("../figures/CI Length vs loc by nind QMS.png", width = wi, height = he, units = "px", 
     pointsize = 20)
 xyplot(ci.length ~ loc|model.t*nind.t, data = qtls[qtls$method == "QMS",],
   strip = strip.custom(par.strip.text = list(cex = 1.0, font = 2, col = "black"),
@@ -284,7 +289,7 @@ xyplot(ci.length ~ loc|model.t*nind.t, data = qtls[qtls$method == "QMS",],
   key = mar.key)
 dev.off()
 
-tiff("CI Length vs loc by nind IM.tiff", width = wi, height = he, units = "px", 
+png("../figures/CI Length vs loc by nind IM.png", width = wi, height = he, units = "px", 
     pointsize = 20)
 xyplot(ci.length ~ loc|model.t*nind.t, data = qtls[qtls$method == "IM",],
   strip = strip.custom(par.strip.text = list(cex = 1.0, font = 2, col = "black"),
@@ -297,7 +302,7 @@ xyplot(ci.length ~ loc|model.t*nind.t, data = qtls[qtls$method == "IM",],
   key = mar.key)
 dev.off()
 
-tiff("CI Length vs loc by nind CIM.tiff", width = wi, height = he, units = "px", 
+png("../figures/CI Length vs loc by nind CIM.png", width = wi, height = he, units = "px", 
     pointsize = 20)
 xyplot(ci.length ~ loc|model.t*nind.t, data = qtls[qtls$method == "CIM",],
   strip = strip.custom(par.strip.text = list(cex = 1.0, font = 2, col = "black"),
@@ -313,7 +318,7 @@ dev.off()
 
 # Accuracy
 
-tiff("Dist vs loc All.tiff", width = wi, height = he, units = "px", 
+png("../figures/Dist vs loc All.png", width = wi, height = he, units = "px", 
     pointsize = 20)
 xyplot(dist ~ loc|method*model.ta, data = qtls,
   strip = strip.custom(par.strip.text = list(cex = 1.0, font = 2, col = "black"),
@@ -326,7 +331,7 @@ xyplot(dist ~ loc|method*model.ta, data = qtls,
   key = nind.key)
 dev.off()
 
-tiff("Dist vs loc by nind QMS.tiff", width = wi, height = he, units = "px", 
+png("../figures/Dist vs loc by nind QMS.png", width = wi, height = he, units = "px", 
     pointsize = 20)
 xyplot(dist ~ loc|model.t*nind.t, data = qtls[qtls$method == "QMS",],
   strip = strip.custom(par.strip.text = list(cex = 1.0, font = 2, col = "black"),
@@ -339,7 +344,7 @@ xyplot(dist ~ loc|model.t*nind.t, data = qtls[qtls$method == "QMS",],
   key = mar.key)
 dev.off()
 
-tiff("Dist vs loc by nind IM.tiff", width = wi, height = he, units = "px", 
+png("../figures/Dist vs loc by nind IM.png", width = wi, height = he, units = "px", 
     pointsize = 20)
 xyplot(dist ~ loc|model.t*nind.t, data = qtls[qtls$method == "IM",],
   strip = strip.custom(par.strip.text = list(cex = 1.0, font = 2, col = "black"),
@@ -352,7 +357,7 @@ xyplot(dist ~ loc|model.t*nind.t, data = qtls[qtls$method == "IM",],
   key = mar.key)
 dev.off()
 
-tiff("Dist vs loc by nind CIM.tiff", width = wi, height = he, units = "px", 
+png("../figures/Dist vs loc by nind CIM.png", width = wi, height = he, units = "px", 
     pointsize = 20)
 xyplot(dist ~ loc|model.t*nind.t, data = qtls[qtls$method == "CIM",],
   strip = strip.custom(par.strip.text = list(cex = 1.0, font = 2, col = "black"),
@@ -368,7 +373,7 @@ dev.off()
 
 ## Peaks by QTL identified correctly
 
-tiff("CD Peak vs loc by detected QMS.tiff", width = wi, height = he, units = "px",
+png("../figures/CD Peak vs loc by detected QMS.png", width = wi, height = he, units = "px",
   pointsize = 20)
 xyplot(peak ~ loc|model.t*nind.t, qtls[qtls$method == "QMS" & qtls$cd == 1,], 
   groups = detected, col = cols[3:4],
@@ -382,7 +387,7 @@ xyplot(peak ~ loc|model.t*nind.t, qtls[qtls$method == "QMS" & qtls$cd == 1,],
   )
 dev.off()
   
-tiff("CD Peak vs loc by detected IM.tiff", width = wi, height = he, units = "px",
+png("../figures/CD Peak vs loc by detected IM.png", width = wi, height = he, units = "px",
   pointsize = 20)
 xyplot(peak ~ loc|model.t*nind.t, qtls[qtls$method == "IM" & qtls$cd == 1,], 
   groups = detected, col = cols[3:4],
@@ -396,7 +401,7 @@ xyplot(peak ~ loc|model.t*nind.t, qtls[qtls$method == "IM" & qtls$cd == 1,],
   )
 dev.off()
 
-tiff("CD Peak vs loc by detected CIM.tiff", width = wi, height = he, units = "px",
+png("../figures/CD Peak vs loc by detected CIM.png", width = wi, height = he, units = "px",
   pointsize = 20)
 #layout(mat = matrix(c(1,2), nrow = 1, ncol = 2))
 xyplot(peak ~ loc|model.t*nind.t, qtls[qtls$method == "CIM" & qtls$cd == 1,], 
@@ -427,7 +432,7 @@ xyplot(peak ~ loc|method*model.ta, qtls,
 
 
 
-tiff("Peak vs loc by CD QMS.tiff", width = wi, height = he, units = "px",
+png("../figures/Peak vs loc by CD QMS.png", width = wi, height = he, units = "px",
   pointsize = 20)
 xyplot(peak ~ loc|model.t*nind.t, qtls[qtls$method == "QMS",], 
   groups = cd, col = cols,
@@ -441,7 +446,7 @@ xyplot(peak ~ loc|model.t*nind.t, qtls[qtls$method == "QMS",],
   )
 dev.off()
   
-tiff("Peak vs loc by CD IM.tiff", width = wi, height = he, units = "px",
+png("../figures/Peak vs loc by CD IM.png", width = wi, height = he, units = "px",
   pointsize = 20)
 xyplot(peak ~ loc|model.t*nind.t, qtls[qtls$method == "IM",], 
   groups = cd, col = cols,
@@ -455,7 +460,7 @@ xyplot(peak ~ loc|model.t*nind.t, qtls[qtls$method == "IM",],
   )
 dev.off()
 
-tiff("Peak vs loc by CD CIM.tiff", width = wi, height = he, units = "px",
+png("../figures/Peak vs loc by CD CIM.png", width = wi, height = he, units = "px",
   pointsize = 20)
 #layout(mat = matrix(c(1,2), nrow = 1, ncol = 2))
 xyplot(peak ~ loc|model.t*nind.t, qtls[qtls$method == "CIM",], 
@@ -473,7 +478,7 @@ dev.off()
 
 
 
-tiff("Distribution of Distance by nind.tiff", width = wi, height = he, units = "px",
+png("../figures/Distribution of Distance by nind.png", width = wi, height = he, units = "px",
   pointsize = 20)
 histogram(~dist|method*model.ta, data = qtls, 
   groups = nind.t, breaks = 100, 
@@ -491,7 +496,7 @@ histogram(~dist|method*model.ta, data = qtls,
 
 dev.off()
 
-tiff("Distribution of CI length by nind.tiff", width = wi, height = he, units = "px",
+png("../figures/Distribution of CI length by nind.png", width = wi, height = he, units = "px",
   pointsize = 20)
 histogram(~ci.length|method*model.ta, data = qtls, 
   groups = nind.t, breaks = 100, 
@@ -523,27 +528,39 @@ histogram(~dist|method*model.ta, data = qtls[qtls$cd == 1,],
     rectangles = list(col = cols[1:4]))
   )
 
+hs.a = histogram(~ dist | nind.t * model.t * method * nmar, data = qtls, breaks = 100)
+hs.c = histogram(~ dist | nind.t * model.t * method * nmar, data = qtls[qtls$cd == 1,], breaks = 100)
+
+( qtl.a <- hs.a$packet.sizes )
+( qtl.c <- hs.c$packet.sizes )
+
+( nomd.a = histogram(~ dist | nind.t * model.t * method, data = qtls, breaks = 100)$packet.sizes )
+( nomd.c = histogram(~ dist | nind.t * model.t * method, data = qtls[qtls$cd == 1,], breaks = 100)$packet.sizes )
 
 
-hs.a = histogram(~dist|nind.t*model.t*method*nmar, data = qtls, breaks = 100)
-hs.c = histogram(~dist|nind.t*model.t*method*nmar, data = qtls[qtls$cd == 1,], breaks = 100  )
+write.csv(cbind(qtl.a, qtl.c), file = "powercalc.csv", quote = FALSE, row.names = FALSE)
+write.csv(cbind(nomd.a, nomd.c), file = "powercalc_nomd.csv", quote = FALSE, row.names = FALSE)
 
-qtl.a = hs.a$packet.sizes
-qtl.c = hs.c$packet.sizes
+## copy the packet sizes to excel, sort to make one table. Printing will provide the metadata on
+## each group. Use the number of QTL to estimate power and fdr
 
-## copy the packet sizes to excel, sort to make one table.  Use the number of QTL 
-## to estimate power and fdr
 
 pc = read.csv("powercalc.csv")
 pc.nomd = read.csv("powercalc_nomd.csv")
 pc.nomd$method = factor(pc.nomd$method, levels = c("IM", "CIM", "QMS"))
-pc.nomd$model = gsub(",", " |", pc.nomd$model)
-pc.nomd$model = factor(pc.nomd$model, levels = c("a1 = 5 | a2 = 5",  "a1 = 5 | a2 = 10"))
+pc.nomd$model = factor(pc.nomd$model, levels = c("a1 = 7.5 ; a2 = 7.5",  "a1 = 5 ; a2 = 10"))
 
+## n.crosses * n.phenos * 2 qtl/cross
+pc$nqtl.simulated <- 1800 * 5 * 2
+pc$power <- pc$cd / pc$nqt.simulated * 100
 
-tiff("Power by nind and model.tiff", width = wi, height = he, 
+## n.crosses * n.phenos * 2 qtl/cross * 4 md
+pc.nomd$nqtl.simulated <- 1800 * 5 * 2 * 4
+pc.nomd$power <- pc.nomd$cd / pc.nomd$nqtl.simulated * 100
+
+png("../figures/Power by nind and model.png", width = wi, height = he, 
   units= "px", pointsize = 20)
-xyplot(power ~ nind|model, data = pc.nomd, group = method,
+xyplot(power ~ nind | model, data = pc.nomd, group = method,
     strip = strip.custom(par.strip.text = list(font = 4)), 
     pch = 20, type = "b", lwd = 7, cex = 3 ,
     col = cols[1:3],
@@ -573,26 +590,26 @@ sapply(c("N = 250", "N = 500", "N = 1000", "N = 1500"), function(IND)
     )
   )
 
-tiff("ID Peak LOD vs distance.tiff", width = wi, height = he, units = "px",
+png("../figures/ID Peak LOD vs distance.png", width = wi, height = he, units = "px",
   pointsize = 20)
   
 xyplot(peak.lod ~ dist|method*nind.t, groups = model.ta, data = qtls[qtls$cd == 0,], 
   pch = ".", col = cols[c(5,3)],
   xlab = "Distance from Real QTL (cM)", ylab = "Peak LOD Score",
-  key = list(text = list(c("a1 =  5 | a2 = 5", "a1 = 5 | a2 = 10"), font = 2, cex = 1.1),
+  key = list(text = list(c("a1 = 7.5 ; a2 = 7.5", "a1 = 5 ; a2 = 10"), font = 2, cex = 1.1),
     points = list(col = cols[c(3,5)], pch = 20, cex = 2), space = "right")
   )
 
 dev.off()
 
-tiff("ID Peak LOD vs CI length.tiff", width = wi, height = he, units = "px",
+png("../figures/ID Peak LOD vs CI length.png", width = wi, height = he, units = "px",
   pointsize = 20)
 
 xyplot(peak.lod ~ ci.length|method*nind.t, groups = model.ta, data = qtls[qtls$cd == 0,], 
   pch = ".", col = cols[c(5, 3)],
   xlab = "Confidence Interval Length (cM)", ylab = "Peak LOD Score",
 #auto.key = TRUE
-  key = list(text = list(c("a1 =  5 | a2 = 5", "a1 = 5 | a2 = 10"), font = 2, cex = 1.1),
+  key = list(text = list(c("a1 = 7.5 ; a2 = 7.5", "a1 = 5 ; a2 = 10"), font = 2, cex = 1.1),
     points = list(col = cols[c(3, 5)], pch = 20, cex = 2), space = "right")
   )
   
@@ -602,7 +619,7 @@ dev.off()
 par(mfrow = c(3, 3))
 sapply(1:9, function(i) hist(rgamma(n = 10000, shape = i, scale = 2), breaks = 1000))
  
-tiff("CI length vs Distance by detected QMS.tiff", width = wi, height = he, units = "px",
+png("../figures/CI length vs Distance by detected QMS.png", width = wi, height = he, units = "px",
   pointsize = 20)
 xyplot(ci.length ~ dist|model.t*nind.t, groups = cd, data = qtls[qtls$method == "QMS",], 
   pch = ".", col = cols[1:2],
@@ -614,7 +631,7 @@ xyplot(ci.length ~ dist|model.t*nind.t, groups = cd, data = qtls[qtls$method == 
   )
 dev.off()
 
-tiff("CI length vs Distance by detected CIM.tiff", width = wi, height = he, units = "px",
+png("../figures/CI length vs Distance by detected CIM.png", width = wi, height = he, units = "px",
   pointsize = 20)
 xyplot(ci.length ~ dist|model.t*nind.t, groups = cd, data = qtls[qtls$method == "CIM",], 
   pch = ".", col = cols[1:2],
@@ -626,7 +643,7 @@ xyplot(ci.length ~ dist|model.t*nind.t, groups = cd, data = qtls[qtls$method == 
   )
 dev.off()
 
-tiff("CI length vs Distance by detected IM.tiff", width = wi, height = he, units = "px",
+png("../figures/CI length vs Distance by detected IM.png", width = wi, height = he, units = "px",
   pointsize = 20)
 xyplot(ci.length ~ dist|model.t*nind.t, groups = cd, data = qtls[qtls$method == "IM",], 
   pch = ".", col = cols[1:2],

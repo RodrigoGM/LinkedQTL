@@ -81,12 +81,6 @@ dev.off()
 write.table(mqm, file = "MQM_summary.tab", sep = "\t", quote = FALSE, row.names = FALSE)
 write.table(im, file = "IM_summary.tab", sep = "\t", quote = FALSE, row.names = FALSE)
 
-qtls <- data.frame(cross.no = matrix(NA, nrow = nrow(mqm) + nrow(im)))
-
-qtls$cross.no <- c(mqm$cross.no, im$cross.no)
-qtls$name <- c(mqm$name, im$name)
-qtls$phenotype <- c(mqm$phenotype, im$phenotype)
-
 qtls <- rbind(mqm[, intersect(names(mqm), names(im))], im[, intersect(names(mqm), names(im))])
 qtls$lod <- c(mqm$lod, im$peak.lod)
 qtls$known.dist <- c(mqm$k.dist, im$known.dist)
@@ -96,12 +90,6 @@ qtls$n.qtl <- c(mqm$n.qtl, rep(NA, nrow(im)))
 qtls$peak.lod <- c(mqm$lod, im$peak.lod)
 qtls$lci.lod <- c(rep(NA, nrow(mqm)), im$lci.lod)
 qtls$uci.lod <- c(rep(NA, nrow(mqm)), im$uci.lod)
-
-write.table(qtls[1:564578,], file = "QTL_summary1.tab", sep = "\t", quote = FALSE, row.names = FALSE)
-write.table(qtls[564579:1129155,], file = "QTL_summary2.tab", sep = "\t", quote = FALSE, row.names = FALSE)
-
-save.image("LinkedQTL.rda")
-
 
 qtls$method <- as.character(qtls$method)
 qtls$method<- gsub("stq", "QMS", qtls$method)
@@ -113,15 +101,23 @@ qtls$model.t <- factor(qtls$model.t, levels = c("a1 = 7.5 ; a2 = 7.5", "a1 = 5 ;
 qtls$method <- factor(qtls$method, levels = c("IM", "CIM", "QMS"))
 qtls$model.ta <- factor(qtls$model.t, levels = c("a1 = 5 ; a2 = 10", "a1 = 7.5 ; a2 = 7.5"))
 
-qtls$cd <- NA
-###qtls$cd[qtls$detected == "a1" && qtls$lci <= qtls$loc1 && qtls$loc1 <= qtls$uci] <-  1
-###qtls$cd[qtls$detected == "a2" && qtls$lci <= qtls$loc2 && qtls$loc2 <= qtls$uci] <- 1
+qtls$within.ci <- 0
+qtls$within.ci[qtls$detected == "a1" & qtls$lci <= qtls$loc1 & qtls$loc1 <= qtls$uci] <-  1
+qtls$within.ci[qtls$detected == "a2" & qtls$lci <= qtls$loc2 & qtls$loc2 <= qtls$uci] <- 1
+
+## correctly detected within CI and peak <= 5 cM from real QTL
+qtls$cd <- 0
+qtls$cd[qtls$within.ci == 1 & qtls$dist <= 5] <- 1
+
+## falsely detected , outside cd
 qtls$fd <- NA
-###qtls$fd[qtls$cd == 1] <- 0
-###qtls$fd[qtls$cd == 0] <- 1
+qtls$fd[qtls$cd == 1] <- 0
+qtls$fd[qtls$cd == 0] <- 1
+
 ## check for cd and fd in excel nd re read file.
-#write.table(qtls, file = "QTL_summary.tab", sep = "\t", quote = FALSE, row.names = FALSE)
+write.table(qtls, file = "QTL_summary.txt", sep = "\t", quote = FALSE, row.names = FALSE)
+## write.table(qtls[1:564578,], file = "QTL_summary1.txt", sep = "\t", quote = FALSE, row.names = FALSE)
+## write.table(qtls[564579:1129155,], file = "QTL_summary2.txt", sep = "\t", quote = FALSE, row.names = FALSE)
 
-
-
+save.image("LinkedQTL.rda")
 
